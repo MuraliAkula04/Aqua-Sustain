@@ -6,9 +6,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@aquasustain/shared": ["../shared/src/index.ts"],
-      "@aquasustain/shared/*": ["../shared/src/*"]
+      "@aquasustain/shared": ["./src/shared/index.ts"],
+      "@aquasustain/shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src", "../shared/src"]
+  "include": ["src"]
 }
