@@ -79,10 +79,6 @@ export const PondRegistrationScreen: React.FC<Props> = ({ navigation, route }) =
   };
 
   const validate = () => {
-    if (!form.farmId) {
-      Alert.alert('Required', 'Please select a farm first. Register a farm before adding a pond.');
-      return false;
-    }
     if (!form.name.trim()) {
       Alert.alert('Required', 'Pond name is required');
       return false;
@@ -152,23 +148,13 @@ export const PondRegistrationScreen: React.FC<Props> = ({ navigation, route }) =
             <Text style={styles.backBtnText}>← {t('actionBack')}</Text>
           </TouchableOpacity>
           <Text style={styles.title}>🐟 Register New Pond</Text>
-          <Text style={styles.subtitle}>Add a pond to your aquaculture farm</Text>
+          <Text style={styles.subtitle}>Add and configure your aquaculture pond</Text>
         </View>
 
-        {/* Farm Selector */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Farm Assignment</Text>
-          {farms.length === 0 ? (
-            <View style={styles.noFarmBanner}>
-              <Text style={styles.noFarmText}>⚠️ No farms registered yet.</Text>
-              <TouchableOpacity
-                style={styles.registerFarmBtn}
-                onPress={() => navigation.navigate('FarmRegistration')}
-              >
-                <Text style={styles.registerFarmBtnText}>+ Register a Farm First</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
+        {/* Farm Selector (if farms exist) */}
+        {farms.length > 0 && (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Aqua Location / Group</Text>
             <View style={styles.farmPillRow}>
               {farms.map((farm) => (
                 <TouchableOpacity
@@ -185,8 +171,8 @@ export const PondRegistrationScreen: React.FC<Props> = ({ navigation, route }) =
                 </TouchableOpacity>
               ))}
             </View>
-          )}
-        </View>
+          </View>
+        )}
 
         {/* Basic Details */}
         <View style={styles.card}>

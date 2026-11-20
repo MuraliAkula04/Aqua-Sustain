@@ -173,14 +173,13 @@ export const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) =>
           </TouchableOpacity>
         </View>
 
-        {/* Farm & Pond Management */}
+        {/* Pond Management */}
         <View style={styles.card}>
-          <Text style={styles.cardHeader}>🌾 Farm & Pond Holdings</Text>
-          <Text style={styles.cardSub}>Quick access to register new farms and ponds</Text>
-          <View style={{ flexDirection: 'row', gap: 10, marginTop: 4 }}>
+          <Text style={styles.cardHeader}>🐟 Pond Management</Text>
+          <Text style={styles.cardSub}>Quick access to register and manage your aquaculture ponds</Text>
+          <View style={{ marginTop: 8 }}>
             <TouchableOpacity
               style={{
-                flex: 1,
                 backgroundColor: '#DDF3EC',
                 borderRadius: 10,
                 paddingVertical: 12,
@@ -190,21 +189,7 @@ export const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) =>
               }}
               onPress={() => navigation?.navigate('PondRegistration')}
             >
-              <Text style={{ color: COLORS.darkTeal, fontWeight: '800', fontSize: 13 }}>🐟 Register Pond</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                backgroundColor: '#EFF6FF',
-                borderRadius: 10,
-                paddingVertical: 12,
-                alignItems: 'center',
-                borderWidth: 1,
-                borderColor: '#93C5FD',
-              }}
-              onPress={() => navigation?.navigate('FarmRegistration')}
-            >
-              <Text style={{ color: '#1E40AF', fontWeight: '800', fontSize: 13 }}>🌾 Register Farm</Text>
+              <Text style={{ color: COLORS.darkTeal, fontWeight: '800', fontSize: 13 }}>🐟 + Register New Pond</Text>
             </TouchableOpacity>
           </View>
         </View>

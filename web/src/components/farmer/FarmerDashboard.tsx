@@ -77,23 +77,23 @@ export const FarmerDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Zero Farm Prompt Banner */}
-      {farms.length === 0 && (
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+      {/* Zero Ponds Prompt Banner */}
+      {ponds.length === 0 && (
+        <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div>
-            <h4 className="text-sm font-extrabold text-amber-900 font-heading">
-              {t('noFarmsNotice')}
+            <h4 className="text-sm font-extrabold text-teal-900 font-heading">
+              🐟 No aqua ponds registered yet
             </h4>
-            <p className="text-xs text-amber-700 mt-1">
-              Add your aquaculture farm to enable pond health assessments, water quality stability tracking, and feeding records.
+            <p className="text-xs text-teal-700 mt-1">
+              Add your aquaculture pond to enable health assessments, water quality stability tracking, and feeding records.
             </p>
           </div>
           <button
             onClick={() => setActiveTab('farms')}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs rounded-xl shadow-sm transition whitespace-nowrap self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-sm transition whitespace-nowrap self-start sm:self-auto"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>{t('registerFarm')}</span>
+            <span>+ Register Pond</span>
           </button>
         </div>
       )}

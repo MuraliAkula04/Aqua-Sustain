@@ -107,7 +107,7 @@ export const FarmerDashboardScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           </View>
 
-          {/* Register Farm / Pond CTAs in header */}
+          {/* Register Pond CTA in header */}
           <View style={styles.headerCtaRow}>
             <TouchableOpacity
               style={styles.headerCtaBtn}
@@ -115,39 +115,22 @@ export const FarmerDashboardScreen: React.FC<Props> = ({ navigation }) => {
             >
               <Text style={styles.headerCtaBtnText}>🐟 + Register Pond</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.headerCtaBtn, { backgroundColor: 'rgba(255, 255, 255, 0.2)', marginLeft: 8 }]}
-              onPress={() => navigation.navigate('FarmRegistration')}
-            >
-              <Text style={styles.headerCtaBtnText}>🌾 + Register Farm</Text>
-            </TouchableOpacity>
           </View>
         </View>
 
-        {/* No Farm / No Pond banner */}
-        {farms.length === 0 ? (
-          <View style={styles.emptyBanner}>
-            <Text style={styles.emptyBannerTitle}>🌾 No farms registered yet</Text>
-            <Text style={styles.emptyBannerSub}>Register your first aquaculture farm to unlock all features.</Text>
-            <TouchableOpacity
-              style={styles.emptyBannerBtn}
-              onPress={() => navigation.navigate('FarmRegistration')}
-            >
-              <Text style={styles.emptyBannerBtnText}>+ Register Your First Farm</Text>
-            </TouchableOpacity>
-          </View>
-        ) : ponds.length === 0 ? (
+        {/* No Pond banner */}
+        {ponds.length === 0 && (
           <View style={[styles.emptyBanner, { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }]}>
             <Text style={[styles.emptyBannerTitle, { color: '#1E40AF' }]}>🐟 No ponds registered yet</Text>
-            <Text style={styles.emptyBannerSub}>Add your first pond to start tracking water quality and feed.</Text>
+            <Text style={styles.emptyBannerSub}>Add your first pond to start tracking water quality, feeding, and assessments.</Text>
             <TouchableOpacity
               style={[styles.emptyBannerBtn, { backgroundColor: '#1D4ED8' }]}
               onPress={() => navigation.navigate('PondRegistration')}
             >
-              <Text style={styles.emptyBannerBtnText}>+ Register First Pond</Text>
+              <Text style={styles.emptyBannerBtnText}>+ Register Your First Pond</Text>
             </TouchableOpacity>
           </View>
-        ) : null}
+        )}
 
         {/* Quick Action Grid */}
         <View style={styles.sectionHeader}>
@@ -198,15 +181,6 @@ export const FarmerDashboardScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.actionIcon}>🐟</Text>
             <Text style={styles.actionTitle}>Register Pond</Text>
             <Text style={styles.actionDesc}>Add new pond</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionBtn, { borderColor: '#0369A1', backgroundColor: '#F0F9FF' }]}
-            onPress={() => navigation.navigate('FarmRegistration')}
-          >
-            <Text style={styles.actionIcon}>🌾</Text>
-            <Text style={styles.actionTitle}>Register Farm</Text>
-            <Text style={styles.actionDesc}>Add new farm</Text>
           </TouchableOpacity>
         </View>
 

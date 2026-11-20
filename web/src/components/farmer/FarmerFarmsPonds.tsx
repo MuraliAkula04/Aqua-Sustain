@@ -110,18 +110,11 @@ export const FarmerFarmsPonds: React.FC = () => {
 
         <div className="flex items-center gap-2.5">
           <button
-            onClick={() => setShowAddFarmModal(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-ocean-900 font-bold text-xs transition"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{t('registerFarm')}</span>
-          </button>
-          <button
             onClick={() => setShowAddPondModal(true)}
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs transition shadow-sm"
           >
             <Plus className="w-4 h-4" />
-            <span>{t('addNewPond')}</span>
+            <span>+ Register Pond</span>
           </button>
         </div>
       </div>
