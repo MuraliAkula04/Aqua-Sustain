@@ -5,9 +5,9 @@ import { AppProvider } from './context/AppContext';
 import { initSupabase } from '@aquasustain/shared';
 import './index.css';
 
-// Initialize Supabase backend connection with environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Initialize Supabase backend connection with environment variables or safe defaults
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://rikyawlqxfrhkyrjvaus.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_IvA7QccxNmezbMhe79x4kQ_TDnm9ava';
 
 initSupabase({
   supabaseUrl,
