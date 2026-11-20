@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "npm --prefix web run dev",
     "web:dev": "npm --prefix web run dev",
-    "web:build": "npm --prefix web run build",
+    "web:build": "npm --prefix shared install && npm --prefix web install && npm --prefix web run build",
     "web:preview": "npm --prefix web run preview",
     "mobile:start": "npm --prefix mobile start",
-    "build": "npm --prefix web run build"
+    "build": "npm --prefix shared install && npm --prefix web install && npm --prefix web run build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.2"
   },
   "keywords": [
     "aquaculture",
