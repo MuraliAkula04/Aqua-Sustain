@@ -102,6 +102,7 @@ export const AuthScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Venkata Rama Rao"
+                placeholderTextColor="#9CA3AF"
                 value={name}
                 onChangeText={setName}
               />
@@ -110,6 +111,7 @@ export const AuthScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="+91 98480 12345"
+                placeholderTextColor="#9CA3AF"
                 keyboardType="phone-pad"
                 value={phone}
                 onChangeText={setPhone}
@@ -121,6 +123,7 @@ export const AuthScreen: React.FC<Props> = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="farmer@example.com"
+            placeholderTextColor="#9CA3AF"
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
@@ -133,6 +136,7 @@ export const AuthScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="••••••••"
+                placeholderTextColor="#9CA3AF"
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
@@ -146,6 +150,7 @@ export const AuthScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="••••••••"
+                placeholderTextColor="#9CA3AF"
                 secureTextEntry
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -226,7 +231,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#FFFFFF',
+    color: '#111827',
   },
   submitBtn: {
     backgroundColor: COLORS.teal,
