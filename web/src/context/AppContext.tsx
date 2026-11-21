@@ -153,6 +153,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const data = await dataService.signIn(email, pass);
       await refreshData();
+      // Auto-seed demo data if the account has no farms/ponds
+      await dataService.seedDemoDataForUser();
+      await refreshData();
       return { user: data.user };
     } catch (err: any) {
       return { error: err };
@@ -162,6 +165,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const register = async (email: string, pass: string, meta: { name: string; phone?: string; role?: UserRole }) => {
     try {
       const data = await dataService.signUp(email, pass, meta);
+      // After signup, seed demo data so the account has ponds to show
+      if (dataService.isAuthenticated()) {
+        await dataService.seedDemoDataForUser();
+        await refreshData();
+      }
       return { user: data.user };
     } catch (err: any) {
       return { error: err };

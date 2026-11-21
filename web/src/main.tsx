@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
 import { AppProvider } from './context/AppContext';
-import { initSupabase } from '@aquasustain/shared';
+import { initSupabase, dataService } from '@aquasustain/shared';
 import './index.css';
 
 // Initialize Supabase backend connection with environment variables or safe defaults
@@ -13,6 +13,9 @@ initSupabase({
   supabaseUrl,
   supabaseAnonKey,
 });
+
+// Set up auth state listener for auto session restore / login / logout detection
+dataService.setupAuthListener();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

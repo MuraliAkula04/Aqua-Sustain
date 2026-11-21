@@ -363,7 +363,7 @@ export const PondRegistrationScreen: React.FC<Props> = ({ navigation, route }) =
         <TouchableOpacity
           style={[styles.submitBtn, loading && { opacity: 0.6 }]}
           onPress={handleSubmit}
-          disabled={loading || farms.length === 0}
+          disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color={COLORS.white} />

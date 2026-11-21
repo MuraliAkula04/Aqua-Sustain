@@ -413,6 +413,177 @@ class DataService {
     this.notify();
   }
 
+  /**
+   * Seeds demo/stock data for the currently authenticated user.
+   * Creates a farm + 4 ponds + water quality readings + feed records + expenses.
+   * Idempotent — skips if the user already has farms.
+   */
+  public async seedDemoDataForUser(): Promise<void> {
+    // Only seed if authenticated and has no farms yet
+    if (!this.isAuthenticated()) return;
+    const existingFarms = this.getFarms();
+
+    // Also check Supabase for existing farms
+    const supabase = getSupabase();
+    if (supabase && existingFarms.length === 0) {
+      const { data: dbFarms } = await supabase
+        .from('farms')
+        .select('id')
+        .limit(1);
+      if (dbFarms && dbFarms.length > 0) {
+        await this.fetchFarms();
+        await this.fetchPonds();
+        return;
+      }
+    }
+
+    if (existingFarms.length > 0) return;
+
+    // Create a demo farm
+    const farm = await this.addFarm({
+      name: 'Sri Lakshmi Aqua Farm',
+      state: 'Andhra Pradesh',
+      district: 'West Godavari',
+      mandal: 'Bhimavaram',
+      village: 'Undi',
+      totalAreaAcres: 12.5,
+      waterSource: 'Canal',
+      soilType: 'Clay Loam',
+      caaRegistrationNumber: 'CAA/2026/AP/WG/5512',
+      establishedYear: 2022,
+      status: 'Active',
+    });
+
+    // Create 4 demo ponds
+    const demoPonds = [
+      {
+        farmId: farm.id,
+        name: 'Pond A-1 (High-Yield Vannamei)',
+        code: 'SLA-P1',
+        waterAreaAcres: 2.0,
+        averageDepthMeters: 1.5,
+        species: 'L. vannamei (Whiteleg Shrimp)' as SpeciesType,
+        stockingDate: '2026-10-15',
+        daysOfCulture: 37,
+        stockingDensityPerSqm: 45,
+        totalStockCount: 350000,
+        estimatedSurvivalRatePercent: 92,
+        currentEstimatedBiomassKg: 480,
+        currentMeanBodyWeightGrams: 4.2,
+        targetHarvestWeightGrams: 28,
+        targetHarvestDate: '2027-01-15',
+        cultureStage: 'Grow-out (Early)' as CultureStage,
+        aeratorHpTotal: 14,
+        status: 'Optimal' as const,
+      },
+      {
+        farmId: farm.id,
+        name: 'Pond B-2 (Tiger Prawn)',
+        code: 'SLA-P2',
+        waterAreaAcres: 1.8,
+        averageDepthMeters: 1.3,
+        species: 'P. monodon (Black Tiger)' as SpeciesType,
+        stockingDate: '2026-09-20',
+        daysOfCulture: 62,
+        stockingDensityPerSqm: 20,
+        totalStockCount: 140000,
+        estimatedSurvivalRatePercent: 85,
+        currentEstimatedBiomassKg: 720,
+        currentMeanBodyWeightGrams: 8.5,
+        targetHarvestWeightGrams: 35,
+        targetHarvestDate: '2027-02-10',
+        cultureStage: 'Grow-out (Mid)' as CultureStage,
+        aeratorHpTotal: 10,
+        status: 'Attention' as const,
+      },
+      {
+        farmId: farm.id,
+        name: 'Pond C-3 (Nursery)',
+        code: 'SLA-P3',
+        waterAreaAcres: 0.5,
+        averageDepthMeters: 0.9,
+        species: 'L. vannamei (Whiteleg Shrimp)' as SpeciesType,
+        stockingDate: '2026-11-10',
+        daysOfCulture: 11,
+        stockingDensityPerSqm: 150,
+        totalStockCount: 300000,
+        estimatedSurvivalRatePercent: 95,
+        currentEstimatedBiomassKg: 15,
+        currentMeanBodyWeightGrams: 0.3,
+        targetHarvestWeightGrams: 1.5,
+        targetHarvestDate: '2026-12-15',
+        cultureStage: 'Nursery' as CultureStage,
+        aeratorHpTotal: 4,
+        status: 'Optimal' as const,
+      },
+      {
+        farmId: farm.id,
+        name: 'Pond D-4 (Carp Mixed)',
+        code: 'SLA-P4',
+        waterAreaAcres: 3.0,
+        averageDepthMeters: 1.8,
+        species: 'Catla & Rohu (Carp)' as SpeciesType,
+        stockingDate: '2026-08-01',
+        daysOfCulture: 112,
+        stockingDensityPerSqm: 8,
+        totalStockCount: 95000,
+        estimatedSurvivalRatePercent: 88,
+        currentEstimatedBiomassKg: 2100,
+        currentMeanBodyWeightGrams: 180,
+        targetHarvestWeightGrams: 500,
+        targetHarvestDate: '2027-03-01',
+        cultureStage: 'Grow-out (Mid)' as CultureStage,
+        aeratorHpTotal: 8,
+        status: 'Optimal' as const,
+      },
+    ];
+
+    for (const pond of demoPonds) {
+      await this.addPond(pond);
+    }
+
+    // Add sample water quality readings
+    const ponds = this.getPonds();
+    if (ponds.length > 0) {
+      const sampleReadings = [
+        { pondId: ponds[0].id, temperatureC: 27.8, ph: 7.9, dissolvedOxygenMgL: 5.6, salinityPpt: 18, transparencyCm: 34, ammoniaPpm: 0.08, alkalinityPpm: 140, recordedAt: new Date().toISOString() },
+        { pondId: ponds[0].id, temperatureC: 28.1, ph: 8.0, dissolvedOxygenMgL: 5.4, salinityPpt: 17, transparencyCm: 32, ammoniaPpm: 0.10, alkalinityPpm: 135, recordedAt: new Date(Date.now() - 86400000).toISOString() },
+        { pondId: ponds[1].id, temperatureC: 29.2, ph: 7.5, dissolvedOxygenMgL: 4.2, salinityPpt: 22, transparencyCm: 25, ammoniaPpm: 0.25, alkalinityPpm: 110, recordedAt: new Date().toISOString() },
+        { pondId: ponds[2].id, temperatureC: 26.5, ph: 8.1, dissolvedOxygenMgL: 6.8, salinityPpt: 15, transparencyCm: 40, ammoniaPpm: 0.02, alkalinityPpm: 160, recordedAt: new Date().toISOString() },
+        { pondId: ponds[3].id, temperatureC: 25.0, ph: 7.6, dissolvedOxygenMgL: 5.0, salinityPpt: 0, transparencyCm: 28, ammoniaPpm: 0.12, alkalinityPpm: 120, recordedAt: new Date().toISOString() },
+      ];
+      for (const reading of sampleReadings) {
+        await this.addWaterReading(reading);
+      }
+    }
+
+    // Add sample feed records
+    if (ponds.length > 0) {
+      const feedData = [
+        { pondId: ponds[0].id, feedType: 'Commercial Pellet (CP 38%)', quantityKg: 45, feedingTime: 'Morning & Evening', date: new Date().toISOString().split('T')[0], notes: 'Normal intake, no leftover' },
+        { pondId: ponds[1].id, feedType: 'Commercial Pellet (CP 35%)', quantityKg: 35, feedingTime: 'Morning & Evening', date: new Date().toISOString().split('T')[0], notes: 'Slight reduction due to cloudy weather' },
+        { pondId: ponds[3].id, feedType: 'Rice Bran + Oil Cake Mix', quantityKg: 25, feedingTime: 'Morning', date: new Date().toISOString().split('T')[0], notes: 'Supplementary feeding' },
+      ];
+      for (const feed of feedData) {
+        await this.addFeedRecord(feed);
+      }
+    }
+
+    // Add sample expenses
+    const expenseData = [
+      { category: 'Feed', amount: 45000, date: new Date().toISOString().split('T')[0], description: 'Commercial Pellet 500kg bag - Avanti Feeds', vendor: 'Avanti Feeds Ltd' },
+      { category: 'Labor', amount: 18000, date: new Date().toISOString().split('T')[0], description: 'Monthly wages - 3 workers', vendor: '' },
+      { category: 'Electricity', amount: 12000, date: new Date().toISOString().split('T')[0], description: 'Aerator power consumption (Oct)', vendor: 'APSPDCL' },
+      { category: 'Chemicals', amount: 5500, date: new Date().toISOString().split('T')[0], description: 'Probiotics + Dolomite lime', vendor: 'Local Agri Store' },
+    ];
+    for (const exp of expenseData) {
+      await this.addExpense(exp);
+    }
+
+    this.persist();
+    this.notify();
+  }
+
   public isAuthenticated(): boolean {
     if (!this.data.currentUser || !this.data.currentUser.id) return false;
     const id = this.data.currentUser.id;
@@ -709,15 +880,45 @@ class DataService {
     return this.data.ponds.find((p) => p.id === id);
   }
 
+  /**
+   * Ensures at least one farm exists for the current user.
+   * If no farms are present, auto-creates a default farm in Supabase (or locally).
+   * Returns the first farm's ID.
+   */
+  public async ensureDefaultFarm(): Promise<string> {
+    if (this.data.farms.length > 0) return this.data.farms[0].id;
+
+    const defaultFarm = await this.addFarm({
+      name: 'My Aqua Farm',
+      state: 'Andhra Pradesh',
+      district: 'West Godavari',
+      mandal: 'Bhimavaram',
+      village: 'Bhimavaram',
+      totalAreaAcres: 5,
+      waterSource: 'Canal',
+      soilType: 'Clay Loam',
+      caaRegistrationNumber: '',
+      establishedYear: new Date().getFullYear(),
+      status: 'Active',
+    });
+    return defaultFarm.id;
+  }
+
   public async addPond(pondData: Omit<Pond, 'id'>): Promise<Pond> {
     const supabase = getSupabase();
     let newPond: Pond;
+
+    // If no farmId provided or no farms exist, auto-create a default farm
+    let farmId = pondData.farmId;
+    if (!farmId || !this.data.farms.some((f) => f.id === farmId)) {
+      farmId = await this.ensureDefaultFarm();
+    }
 
     if (supabase) {
       const { data, error } = await supabase
         .from('ponds')
         .insert({
-          farm_id: pondData.farmId,
+          farm_id: farmId,
           name: pondData.name,
           code: pondData.code,
           water_area_acres: pondData.waterAreaAcres,
@@ -773,6 +974,7 @@ class DataService {
 
     newPond = {
       ...pondData,
+      farmId,
       id: `pond-${Date.now()}`,
     };
     this.data.ponds.unshift(newPond);

@@ -83,10 +83,12 @@ export const FarmerFarmsPonds: React.FC = () => {
     }
 
     try {
-      const created = await dataService.addPond(pondForm);
+      // Auto-assign to active farm; dataService.addPond will auto-create a farm if needed
+      const farmId = activeFarm?.id || pondForm.farmId || '';
+      const created = await dataService.addPond({ ...pondForm, farmId });
       setSelectedPondId(created.id);
       setShowAddPondModal(false);
-      showToast(`Pond "${created.name}" added to farm successfully`, 'success');
+      showToast(`Pond "${created.name}" added successfully`, 'success');
     } catch (err) {
       showToast('Failed to register pond', 'error');
     }
@@ -385,21 +387,6 @@ export const FarmerFarmsPonds: React.FC = () => {
             </div>
 
             <form onSubmit={handleCreatePond} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 uppercase mb-1">Select Farm *</label>
-                <select
-                  value={pondForm.farmId}
-                  onChange={(e) => setPondForm({ ...pondForm, farmId: e.target.value })}
-                  className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm text-ocean-900 font-semibold focus:ring-1 focus:ring-ocean-600 focus:outline-none"
-                >
-                  {farms.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 uppercase mb-1">Pond Name *</label>
