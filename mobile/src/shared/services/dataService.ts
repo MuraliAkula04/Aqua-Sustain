@@ -63,9 +63,39 @@ const STORAGE_KEY = 'aquasustain_session_store_v1';
 class DataService {
   private data: StoreData;
   private listeners: Set<() => void> = new Set();
+  private authListenerSetUp = false;
 
   constructor() {
     this.data = this.loadInitialData();
+  }
+
+  /**
+   * Must be called once after initSupabase() so the app reacts to login,
+   * logout, token-refresh and session-restore events automatically.
+   */
+  public setupAuthListener() {
+    if (this.authListenerSetUp) return;
+    const supabase = getSupabase();
+    if (!supabase) return;
+    this.authListenerSetUp = true;
+
+    supabase.auth.onAuthStateChange(async (event: string, session: any) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        await this.fetchCurrentUserProfile();
+        this.notify();
+      } else if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
+        this.data.currentUser = { ...INITIAL_USER, id: 'demo-unauthenticated', name: 'Guest' };
+        this.clearMockDataForAuthenticatedUser();
+        this.persist();
+      }
+    });
+
+    // Also check for an existing session on startup (restore persisted login)
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      if (session?.user) {
+        this.fetchCurrentUserProfile().then(() => this.notify());
+      }
+    });
   }
 
   private loadInitialData(): StoreData {
@@ -198,6 +228,29 @@ class DataService {
         },
       });
       if (error) throw error;
+
+      // If Supabase returned a session directly (email confirmation disabled),
+      // the user is already logged in — load their profile.
+      if (data.session) {
+        await this.fetchCurrentUserProfile();
+        this.notify();
+        return data;
+      }
+
+      // If no session, email confirmation may be required.
+      // Try to auto-sign-in immediately (works when "Confirm email" is OFF
+      // in Supabase dashboard, or for existing confirmed users).
+      try {
+        const signInResult = await supabase.auth.signInWithPassword({ email, password });
+        if (!signInResult.error && signInResult.data.session) {
+          await this.fetchCurrentUserProfile();
+          this.notify();
+          return signInResult.data;
+        }
+      } catch (_ignored) {
+        // Auto-sign-in failed — email confirmation is likely required.
+      }
+
       return data;
     }
     return { user: { id: `user-${Date.now()}`, email }, session: null };
@@ -211,7 +264,13 @@ class DataService {
         window.localStorage.removeItem(STORAGE_KEY);
       }
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        // Provide a user-friendly message for unconfirmed emails
+        if (error.message?.toLowerCase().includes('email not confirmed')) {
+          throw new Error('Your email is not yet confirmed. Please check your inbox (and spam folder) for a confirmation link, or try registering again.');
+        }
+        throw error;
+      }
       // Reset to clean state before fetching real data
       this.data.farms = [];
       this.data.ponds = [];
@@ -222,9 +281,10 @@ class DataService {
       this.data.reminders = [];
       this.data.supportTickets = [];
       await this.fetchCurrentUserProfile();
+      this.notify();
       return data;
     }
-    return { user: { email }, session: null };
+    throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
   }
 
   public async signOut() {

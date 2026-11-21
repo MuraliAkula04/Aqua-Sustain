@@ -47,13 +47,23 @@ export const AuthScreen: React.FC<Props> = ({ navigation }) => {
           setLoading(false);
           return;
         }
-        await dataService.signUp(email, password, {
+        const result = await dataService.signUp(email, password, {
           name: name.trim() || 'Farmer',
           phone: phone.trim(),
           role: 'farmer',
         });
-        Alert.alert('Account Created', 'Registration successful! You may now sign in.');
-        setIsRegister(false);
+        // If signUp auto-signed-in the user (session returned), the
+        // RootNavigator's onAuthStateChange listener will switch screens
+        // automatically — no alert needed.
+        if (result && (result as any).session) {
+          // Already logged in – navigator will switch
+        } else {
+          Alert.alert(
+            'Account Created',
+            'Registration successful! Please check your email for a confirmation link, then sign in.',
+          );
+          setIsRegister(false);
+        }
       } else {
         await dataService.signIn(email, password);
         // RootNavigator will automatically switch to authenticated stack via dataService subscription
